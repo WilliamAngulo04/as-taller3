@@ -13,6 +13,9 @@ class User(Base):
     is_active = Column(Boolean, default=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     
+    # Relationships
+    carts = relationship("Cart", back_populates="user")
+    
     def __repr__(self):
         # Implementar representación del objeto
         return f"<User id={self.id} username='{self.username}' email='{self.email}'>"

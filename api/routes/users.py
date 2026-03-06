@@ -51,7 +51,7 @@ async def register_user(user: UserCreate, db: Session = Depends(get_db)):
     new_user = User(
         username=user.username,
         email=user.email,
-        hashed_password=hashed_password
+        password_hash=hashed_password
     )
     db.add(new_user)
     db.commit()
@@ -64,7 +64,7 @@ async def register_user(user: UserCreate, db: Session = Depends(get_db)):
 async def login_user(user: UserLogin, db: Session = Depends(get_db)):
     # Implementar login de usuario
     db_user = db.query(User).filter(User.email == user.email).first()
-    if not db_user or not verify_password(user.password, db_user.hashed_password):
+    if not db_user or not verify_password(user.password, db_user.password_hash):
         raise HTTPException(status_code=400, detail="Correo electrónico o contraseña incorrectos")
     return UserProfile.from_orm(db_user)
 

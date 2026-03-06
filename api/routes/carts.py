@@ -22,19 +22,27 @@ class CartItemUpdate(BaseModel):
 @router.get("/")
 async def get_user_cart(db: Session = Depends(get_db)):
     # Implementar obtener carrito del usuario
+    user_id = 1  # TODO: Obtener del token de autenticación
     cart = db.query(Cart).filter(Cart.user_id == user_id).first()
 
     if not cart:
-        raise HTTPException(status_code=404, detail="Carrito no encontrado")
+        return {"cart_id": None, "items": []}
     
     items = db.query(CartItem).filter(CartItem.cart_id == cart.id).all()
     return {
         "cart_id": cart.id,
         "items": [
             {
+                "id": item.id,
                 "product_id": item.product_id,
                 "quantity": item.quantity,
-                "added_at": item.added_at
+                "added_at": item.added_at,
+                "product": {
+                    "id": item.product.id,
+                    "name": item.product.name,
+                    "price": item.product.price,
+                    "image_url": item.product.image_url
+                }
             }
             for item in items
         ]
@@ -42,8 +50,9 @@ async def get_user_cart(db: Session = Depends(get_db)):
 
 # Endpoint para agregar un item al carrito
 @router.post("/items")
-async def add_item_to_cart(db: Session = Depends(get_db)):
+async def add_item_to_cart(item: CartItemCreate, db: Session = Depends(get_db)):
     # Implementar agregar item al carrito
+    user_id = 1  # TODO: Obtener del token de autenticación
     cart = db.query(Cart).filter(Cart.user_id == user_id).first()
 
     if not cart:
@@ -64,7 +73,7 @@ async def add_item_to_cart(db: Session = Depends(get_db)):
 
 # Endpoint para actualizar la cantidad de un item en el carrito
 @router.put("/items/{item_id}")
-async def update_cart_item(item_id: int, db: Session = Depends(get_db)):
+async def update_cart_item(item_id: int, item_update: CartItemUpdate, db: Session = Depends(get_db)):
     # Implementar actualizar cantidad de item
     item = db.query(CartItem).filter(CartItem.id == item_id).first()
     if not item:
@@ -88,6 +97,7 @@ async def remove_item_from_cart(item_id: int, db: Session = Depends(get_db)):
 @router.delete("/")
 async def clear_cart(db: Session = Depends(get_db)):
     # Implementar limpiar carrito
+    user_id = 1  # TODO: Obtener del token de autenticación
     cart = db.query(Cart).filter(Cart.user_id == user_id).first()
     if not cart:
         raise HTTPException(status_code=404, detail="Carrito no encontrado")

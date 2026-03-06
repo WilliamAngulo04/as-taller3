@@ -14,6 +14,9 @@ class Product(Base):
     image_url = Column(String, nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     
+    # Relationships
+    cart_items = relationship("CartItem", back_populates="product")
+    
     def __repr__(self):
         # Implementar representación del objeto
         return f"<Product id={self.id} name='{self.name}'>"

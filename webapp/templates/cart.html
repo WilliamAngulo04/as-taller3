@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}Carrito - Tienda Virtual{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="mb-4">Tu Carrito de Compras</h1>
+    </div>
+</div>
+
+{% if cart.items %}
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5>Productos en tu carrito</h5>
+            </div>
+            <div class="card-body">
+                {% for item in cart.items %}
+                <div class="row mb-3 align-items-center">
+                    <div class="col-md-2">
+                        <img src="{{ item.product.image_url or '#' }}" alt="{{ item.product.name }}" class="img-fluid" style="max-height: 50px;">
+                    </div>
+                    <div class="col-md-4">
+                        <h6>{{ item.product.name }}</h6>
+                        <p class="mb-0">{{ item.product.description or '' }}</p>
+                    </div>
+                    <div class="col-md-2">
+                        <p class="mb-0">Cantidad: {{ item.quantity }}</p>
+                    </div>
+                    <div class="col-md-2">
+                        <p class="mb-0">${{ "%.2f"|format(item.product.price * item.quantity) }}</p>
+                    </div>
+                    <div class="col-md-2">
+                        <button class="btn btn-sm btn-danger">Remover</button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5>Resumen</h5>
+            </div>
+            <div class="card-body">
+                <p>Total: <strong>${{ "%.2f"|format(cart.items | sum(attribute='product.price * quantity')) }}</strong></p>
+                <button class="btn btn-success w-100">Proceder al Pago</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="row">
+    <div class="col-12 text-center">
+        <p>Tu carrito está vacío.</p>
+        <a href="{{ url_for('products') }}" class="btn btn-primary">Ver Productos</a>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

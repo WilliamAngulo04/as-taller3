@@ -31,3 +31,6 @@ async def root():
 async def health_check():
     # Endpoint de verificación de salud
     return {"status": "healthy"}
+async def health_check():
+    # Endpoint de verificación de salud
+    return {"status": "healthy"}
